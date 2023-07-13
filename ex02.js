@@ -2,8 +2,10 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const knex = require("knex");
-const app = express();
+const dotenv = require("dotenv");
 const multer = require("multer");
+dotenv.config();
+const app = express();
 
 const db = knex({
   client: "mysql",
@@ -11,7 +13,7 @@ const db = knex({
     host: process.env.EX02_MYSQL_HOST || "127.0.0.1",
     port: process.env.EX02_MYSQL_PORT || 3306,
     user: process.env.EX02_MYSQL_USER || "root",
-    password: process.env.EX02_MYSQL_PASS || "root_1234",
+    password: process.env.EX02_MYSQL_PASS || "root",
     database: process.env.EX02_MYSQL_DB || "iote1-5-2566",
     supportBigNumber: true,
     timezone: "+7:00",
@@ -36,15 +38,4 @@ app.get("/list", async (req, res) => {
 
 app.listen(7001, () => {
   console.log("ready:candle:7001");
-  console.log({
-    host: process.env.EX02_MYSQL_HOST ?? "127.0.0.1",
-    port: process.env.EX02_MYSQL_PORT ?? 3306,
-    user: process.env.EX02_MYSQL_USER ?? "root",
-    password: process.env.EX02_MYSQL_PASS ?? "root",
-    database: process.env.EX02_MYSQL_DB ?? -"iote1-5-2566",
-    supportBigNumber: true,
-    timezone: "+7:00",
-    dateStrings: true,
-    charset: "utf8mb4_unicode_ci",
-  });
 });
