@@ -80,6 +80,32 @@ app.get("/insert", async (req, res) => {
   }
 });
 
+app.post("/add", async (req, res) => {
+  if (!req.body.username || !req.body.password || !req.body.dep) {
+    return res.send({
+      ok: 0,
+      error: "validate failed",
+    });
+  }
+  let ids;
+  try {
+    ids = await db("member").insert({
+      username: req.body.username,
+      password: req.body.password,
+      dep: req.body.dep,
+    });
+    res.send({
+      ok: 1,
+      ids: ids[0],
+    });
+  } catch (error) {
+    res.send({
+      ok: 0,
+      error: error.message,
+    });
+  }
+});
+
 app.get("/update", async (req, res) => {
   if (
     !req.query.id ||
