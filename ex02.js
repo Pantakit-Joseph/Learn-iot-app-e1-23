@@ -139,6 +139,61 @@ app.get("/update", async (req, res) => {
   }
 });
 
+app.post("/edit", async (req, res) => {
+  if (
+    !req.body.id ||
+    !req.body.username ||
+    !req.body.password ||
+    !req.body.dep
+  ) {
+    res.send({
+      ok: 0,
+      error: "validate failed",
+    });
+  }
+  let result;
+  try {
+    result = await db("member").where("id", req.body.id).update({
+      username: req.body.username,
+      password: req.body.password,
+      dep: req.body.dep,
+    });
+    res.send({
+      ok: 1,
+      result,
+    });
+  } catch (error) {
+    console.log(error);
+    res.send({
+      ok: 0,
+      error: error.message,
+      code: error?.code,
+    });
+  }
+});
+
+// app.post("/edit", async (req, res) => {
+//   try {
+//     console.log(req.body);
+//     let row = await db("member").where("id", "=", req.body.id).update({
+//       username: req.body.username,
+//       password: req.body.password,
+//       dep: req.body.dep,
+//     });
+//     console.log("row=", row);
+//     res.send({
+//       ok: 1,
+//       data: row,
+//     });
+//   } catch (e) {
+//     console.log(e.message);
+//     res.send({
+//       ok: 0,
+//       error: e.message,
+//     });
+//   }
+// });
+
 app.get("/delete", async (req, res) => {
   if (!req.query.id) {
     res.send({
