@@ -4,6 +4,18 @@ const bodyParser = require("body-parser");
 const knex = require("knex");
 const dotenv = require("dotenv");
 const multer = require("multer");
+const uniqueSlug = require("unique-slug");
+const storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, "uploads");
+  },
+  filename: function (req, file, callback) {
+    console.log(file);
+    const fileExtension = file.originalname.split(".").slice(-1);
+    callback(null, uniqueSlug() + "." + fileExtension);
+  },
+});
+const upload = multer({ storage });
 dotenv.config();
 const app = express();
 
@@ -27,6 +39,21 @@ app.use(bodyParser.json());
 app.get("/", (req, res) => {
   console.log("test api");
   res.send({ ok: 1 });
+});
+
+app.post("/test/upload", upload.array("files", 20), function (req, res, next) {
+  // req.files is array of `photos` files
+  // req.body will contain the text fields, if there were any
+  console.log(req.files);
+  const files = [...req.files];
+  // remove buffer
+  for (const file of files) {
+    file.buffer = null;
+  }
+  res.send({
+    files,
+    ok: 1,
+  });
 });
 
 // app.get("/list", async (req, res) => {
