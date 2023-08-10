@@ -10,7 +10,6 @@ const storage = multer.diskStorage({
     callback(null, "uploads");
   },
   filename: function (req, file, callback) {
-    console.log(file);
     const fileExtension = file.originalname.split(".").slice(-1);
     callback(null, uniqueSlug() + "." + fileExtension);
   },
@@ -45,13 +44,9 @@ app.post("/test/upload", upload.array("files", 20), function (req, res, next) {
   // req.files is array of `photos` files
   // req.body will contain the text fields, if there were any
   console.log(req.files);
-  const files = [...req.files];
-  // remove buffer
-  for (const file of files) {
-    file.buffer = null;
-  }
+
   res.send({
-    files,
+    files: req.files,
     ok: 1,
   });
 });
