@@ -68,6 +68,7 @@ app.post("/upload", async (req, res, next) => {
       file: req.file,
     });
   });
+  console.log(req.file);
 });
 
 app.get("/list", async (req, res) => {
