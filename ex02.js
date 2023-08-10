@@ -7,7 +7,7 @@ const multer = require("multer");
 const uniqueSlug = require("unique-slug");
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, "uploads");
+    callback(null, __dirname + "/public/uploads");
   },
   filename: function (req, file, callback) {
     const fileExtension = file.originalname.split(".").slice(-1);
@@ -35,6 +35,8 @@ const db = knex({
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/uploads", express.static(__dirname + "/public/uploads"));
+
 app.get("/", (req, res) => {
   console.log("test api");
   res.send({ ok: 1 });

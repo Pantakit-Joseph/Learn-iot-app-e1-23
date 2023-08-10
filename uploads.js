@@ -5,7 +5,7 @@ const multer = require("multer");
 const uniqueSlug = require("unique-slug");
 const storage = multer.diskStorage({
   destination: function (req, file, callback) {
-    callback(null, "uploads");
+    callback(null, __dirname + "/public/uploads");
   },
   filename: function (req, file, callback) {
     const fileExtension = file.originalname.split(".").slice(-1);
@@ -16,6 +16,7 @@ const upload = multer({ storage });
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/uploads", express.static(__dirname + "/public/uploads"));
 
 app.post("/api/photo", function (req, res, next) {
   const uploadFun = upload.array("files", 20);
