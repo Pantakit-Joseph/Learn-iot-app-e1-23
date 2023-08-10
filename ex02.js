@@ -35,7 +35,7 @@ const db = knex({
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use("/uploads", express.static(__dirname + "/public/uploads"));
+app.use(express.static(__dirname + "/public"));
 
 app.get("/", (req, res) => {
   console.log("test api");
@@ -53,13 +53,22 @@ app.post("/test/upload", upload.array("files", 20), function (req, res, next) {
   });
 });
 
-// app.get("/list", async (req, res) => {
-//   const data = await db("users_student").where("major_id", 98);
-//   res.send({
-//     data: data,
-//     status: 1,
-//   });
-// });
+app.post("/upload", async (req, res, next) => {
+  const uploadFun = upload.single("file");
+  uploadFun(req, res, function (err) {
+    console.log(req.file);
+    if (err) {
+      res.send({
+        ok: 0,
+        error: err,
+      });
+    }
+    res.send({
+      ok: 1,
+      file: req.file,
+    });
+  });
+});
 
 app.get("/list", async (req, res) => {
   const data = await db("member");
@@ -195,28 +204,6 @@ app.post("/edit", async (req, res) => {
     });
   }
 });
-
-// app.post("/edit", async (req, res) => {
-//   try {
-//     console.log(req.body);
-//     let row = await db("member").where("id", "=", req.body.id).update({
-//       username: req.body.username,
-//       password: req.body.password,
-//       dep: req.body.dep,
-//     });
-//     console.log("row=", row);
-//     res.send({
-//       ok: 1,
-//       data: row,
-//     });
-//   } catch (e) {
-//     console.log(e.message);
-//     res.send({
-//       ok: 0,
-//       error: e.message,
-//     });
-//   }
-// });
 
 app.get("/delete", async (req, res) => {
   if (!req.query.id) {
