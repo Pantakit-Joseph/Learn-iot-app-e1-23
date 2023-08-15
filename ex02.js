@@ -36,6 +36,7 @@ const db = knex({
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(__dirname + "/public"));
+app.use("/photos", express.static(__dirname + "/public/uploads"));
 
 app.get("/", (req, res) => {
   console.log("test api");
@@ -53,12 +54,12 @@ app.post("/test/upload", upload.array("files", 20), function (req, res, next) {
   });
 });
 
-app.post("/upload", async (req, res, next) => {
+app.post("/upload", async (req, res) => {
   const uploadFun = upload.single("file");
   uploadFun(req, res, function (err) {
-    console.log(req.file);
+    console.log("uploadFun", req.file);
     if (err) {
-      res.send({
+      return res.send({
         ok: 0,
         error: err,
       });
@@ -68,7 +69,6 @@ app.post("/upload", async (req, res, next) => {
       file: req.file,
     });
   });
-  console.log(req.file);
 });
 
 app.get("/list", async (req, res) => {
@@ -114,7 +114,7 @@ app.get("/insert", async (req, res) => {
   }
 });
 
-app.post("/add", async (req, res) => {
+app.post("/add", upload.single("file"), async (req, res) => {
   if (!req.body.username || !req.body.password || !req.body.dep) {
     return res.send({
       ok: 0,
@@ -127,6 +127,7 @@ app.post("/add", async (req, res) => {
       username: req.body.username,
       password: req.body.password,
       dep: req.body.dep,
+      img: req.file.filename,
     });
     res.send({
       ok: 1,
