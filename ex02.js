@@ -141,28 +141,35 @@ app.post("/add", upload.single("file"), async (req, res) => {
   }
 });
 
-app.get("/update", async (req, res) => {
+app.post("/update", upload.single("file"), async (req, res) => {
   if (
-    !req.query.id ||
-    !req.query.username ||
-    !req.query.password ||
-    !req.query.dep
+    !req.body.id ||
+    !req.body.username ||
+    !req.body.password ||
+    !req.body.dep
   ) {
     res.send({
       ok: 0,
       error: "validate failed",
     });
   }
+  console.log("file data => ", req.file);
+  const data = {
+    username: req.body.username,
+    password: req.body.password,
+    dep: req.body.dep,
+  };
+  if (req.file?.filename) {
+    data.img = req.file.filename;
+  }
+  console.log("data => ", data);
   let result;
   try {
-    result = await db("member").where("id", req.query.id).update({
-      username: req.query.username,
-      password: req.query.password,
-      dep: req.query.dep,
-    });
+    result = await db("member").where("id", req.body.id).update(data);
     res.send({
       ok: 1,
       result,
+      data,
     });
   } catch (error) {
     console.log(error);
